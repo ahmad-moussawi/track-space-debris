@@ -19,15 +19,41 @@
 </head>
 
 <body>
-  <div class="controls">
+  <div class="left-controls">
+    <div class="control">
+      <label>Object Type</label>
+      <select id="filter_object_type">
+        <option>ALL</option>
+        <option>PAYLOAD</option>
+        <option>DEBRIS</option>
+        <option>ROCKET BODY</option>
+        <option>TBA</option>
+      </select>
+    </div>
+    <div class="control">
+      <label>Country</label>
+      <select id="filter_country"></select>
+    </div>
+    <div class="control">
+      <label>Period</label>
+      <select id="filter_period">
+        <option>ALL</option>
+        <option value="10">&lt; 10</option>
+        <option value="100">&lt; 100</option>
+        <option value="1000">&lt; 1000</option>
+        <option value="10000">&lt; 10000</option>
+      </select>
+    </div>
+  </div>
+  <!-- <div class="controls">
     <div>
     </div>
     <div>
-      <button class="btn">SIMULATE</button>
+      <button class="btn" id="test">SIMULATE</button>
       <button class="btn">PROBABILITIES</button>
       <button class="btn">COLLISION</button>
     </div>
-  </div>
+  </div> -->
   <div class="console"></div>
   <div id="globeViz"></div>
   <script type="module" src="/src/main.js"></script>

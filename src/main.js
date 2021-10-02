@@ -1,114 +1,89 @@
 import './style.css'
-import * as THREE from 'three';
 import { TrackballControls } from './TrackballControls';
-import ThreeGlobe from 'three-globe';
-import { twoline2satrec, sgp4, propagate, degreesToRadians, gstime, eciToEcf, geodeticToEcf, eciToGeodetic, ecfToLookAngles, dopplerFactor, degreesLong, degreesLat } from 'satellite.js'
-import { data } from './data'
-import { uniq, random } from 'lodash'
-import { addMinutes } from 'date-fns';
+import { data as DATA } from './data'
+import * as THREE from 'three';
+import { addSeconds } from 'date-fns';
+import { Globe, createCoordPoint, getPosition, updatePoints, getNumberFamily } from './helper'
+import { uniq, groupBy, chain } from 'lodash';
 
-// Sample TLE
-var tleLine1 = '1 25544U 98067A   19156.50900463  .00003075  00000-0  59442-4 0  9992',
-  tleLine2 = '2 25544  51.6433  59.2583 0008217  16.4489 347.6017 15.51174618173442';
+const fps = 20;
+
+console.log(Globe);
 
 // You will need GMST for some of the coordinate transforms.
 // http://en.wikipedia.org/wiki/Sidereal_time#Definition
 
+// OBJECT_TYPE: PAYLOAD, DEBRIS, ROCKET BODY, TBA
+// COUNTRY: US, PRC, JPN, NETH, POL, CIS, TBD, CA, SVN, UK, ARGN, FR, IT, FIN, GER, NZ, IND, UAE, LUXE, SPN, SWTZ, INDO, LTU, EUTE, ISRA, AC, BELA, TURK, DEN, SING, SES, ROC, NKOR, SKOR, KAZ, IM, ITSO, EGYP, SEAL, CHBZ, SAFR, ESA, STCT, AB, BRAZ, AUS, ALG, NOR, EUME, ECU, ISS
+// LAUNCH_DATE
+// console.log(uniq(data.map(x => x.)).join(', '));
 
-var failed = [], passed = [];
+const ALL_COUNTRIES = groupBy(DATA.map(x => x.COUNTRY_CODE), x => x);
 
-function getPosition(tle1, tle2, date) {
-  const gmst = gstime(date);
-  const satrec = twoline2satrec(tle1, tle2);
-  const { position } = propagate(satrec, date);
-  const gd = eciToGeodetic(position, gmst);
+document.querySelector('#filter_country').innerHTML =
+  `<option>ALL</option>` + Object.keys(ALL_COUNTRIES)
+    .map(x => `<option value=${x}>${x} (${ALL_COUNTRIES[x].length})</option>`)
 
-  return {
-    lat: degreesLat(gd.latitude),
-    lng: degreesLong(gd.longitude),
-    alt: gd.height
-  };
 
+
+
+
+let filter = {
+  objectType: 'ALL',
+  countryCode: 'ALL',
+  period: 'ALL',
+};
+
+
+export function filterData(data, filter) {
+  let all = chain(data);
+
+  console.log(filter);
+
+
+  if (filter.objectType !== 'ALL') {
+    all = all.filter(x => x.OBJECT_TYPE === filter.objectType);
+  }
+
+  if (filter.countryCode !== 'ALL') {
+    all = all.filter(x => x.COUNTRY_CODE === filter.countryCode);
+  }
+
+  if (filter.period !== 'ALL') {
+    all = all.filter(x => x.PERIOD <= +filter.period);
+  }
+
+  return all.value();
 }
 
 
-// {
-//   tle1: "1 49131U 21082B   21269.58334491 -.01112494  00000-0 -91120-2 0  9997",
-//   tle2: "2 49131  70.0002  91.8811 0007837 309.9221 210.8378 15.72858730  2050",
-//   longitude: -0.013581390247896508,
-//   latitude: 1.1135211096996576,
-//   height: 394.4929419748678
-// }
-
-
-// Gen random data
-
-/*
-const gData = [...Array(N).keys()].map(() => {
-
-  var obj = {
-    lat: (Math.random() - 0.5) * 180,
-    lng: (Math.random() - 0.5) * 360,
-    alt: Math.random() * 0.8 + 0.1,
-    radius: Math.random() * 5,
-    color: ['red', 'white', 'blue', 'green'][Math.round(Math.random() * 3)]
-  };
-
-  var gd = getPosition(tleLine1, tleLine2, true);
-  console.log(gd);
-
-  return obj;
-});
-*/
-
-console.log(uniq(data.map(x => x.RCS_SIZE)));
-
-var sizeMap = {
-  SMALL: .5,
-  MEDIUM: 1,
-  LARGE: .2,
-};
-
-const gData = data.filter(x => x.RCS_SIZE !== null).map(x => {
-
-  var coord = getPosition(x.TLE_LINE1, x.TLE_LINE2, new Date());
-  return {
-    origin: x,
-    lat: coord.lat,
-    lng: coord.lng,
-    alt: coord.alt * 100 / 6371,
-    radius: sizeMap[x.RCS_SIZE] * random(0.8, 1.2),
-    color: ['red', 'white', 'blue', 'green'][Math.round(Math.random() * 3)]
-  }
-
+document.querySelector('#filter_object_type').addEventListener('change', ev => {
+  filter.objectType = ev.target.value;
+  gData = filterData(DATA, filter).map(x => createCoordPoint(x));
+  console.log(gData);
+  updatePoints(Globe, gData);
 });
 
-document.querySelector('.console').innerHTML = gData.map(x =>
+document.querySelector('#filter_country').addEventListener('change', ev => {
+  filter.countryCode = ev.target.value;
+  gData = filterData(DATA, filter).map(x => createCoordPoint(x));;
+  updatePoints(Globe, gData);
+});
+
+document.querySelector('#filter_period').addEventListener('change', ev => {
+  filter.period = ev.target.value;
+  gData = filterData(DATA, filter).map(x => createCoordPoint(x));;
+  updatePoints(Globe, gData);
+});
+
+
+
+let gData = DATA.map(x => createCoordPoint(x));
+updatePoints(Globe, gData);
+
+document.querySelector('.console').innerHTML = gData.slice(0, 100).map(x =>
   `${x.origin.OBJECT_NAME}: ${x.lat.toFixed(2)}, ${x.lng.toFixed(2)}`
 ).join('\n')
-
-console.log(gData);
-
-
-const Globe = new ThreeGlobe()
-  .globeImageUrl('//unpkg.com/three-globe/example/img/earth-day.jpg')
-  .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
-  // .pointOfView({ altitude: 3.5 })
-  .customLayerData(gData)
-  .customThreeObject((d, globRadius) => {
-    return new THREE.Mesh(
-      new THREE.SphereBufferGeometry(d.radius),
-      new THREE.MeshLambertMaterial({ color: d.color })
-    )
-  })
-  .customThreeObjectUpdate((obj, d) => {
-    Object.assign(obj.position, Globe.getCoords(d.lat, d.lng, d.alt / 100));
-  });
-// .pointsData(gData)
-// .pointAltitude('size')
-// .pointColor('color');
-
-// console.log(Globe);
 
 // Setup renderer
 const renderer = new THREE.WebGLRenderer();
@@ -141,30 +116,56 @@ function moveSpheres() {
   gData.forEach(x => {
     var coord = getPosition(x.origin.TLE_LINE1, x.origin.TLE_LINE2, date);
 
-    x.lat += 0.01 //coord.lat;
-    x.lng += 0.01 //coord.lng;
+    x.lat += random(.1, .2) //coord.lat;
+    // x.lng += random(.1, .2) //coord.lng;
     x.alt = coord.alt * 100 / 6371;
   })
 
   Globe.customLayerData(Globe.customLayerData());
 }
 
-setInterval(() => {
-  moveSpheres();
-}, 10);
+const start = new Date();
+let i = 1;
+
 
 // Kick-off renderer
-(function animate() { // IIFE
+function animate() { // IIFE
+
+  i++;
+  if (i % 10 === 0 || i % 5 === 0 || i % 3 === 0 || i % 7 === 0) {
+    setTimeout(() => {
+      requestAnimationFrame(animate);
+    }, 1000 / fps);
+    return;
+  }
+
+  if (i > 100000) {
+    i = 0;
+  }
+
+  const newTime = addSeconds(start, i);
 
   gData.forEach(d => {
-    // d.lat += 0.05 // * Math.random()
+    const newPosition = getPosition(
+      d.origin.TLE_LINE1, d.origin.TLE_LINE2,
+      newTime
+    );
+
+
+
+    d.lat = newPosition.lat // * Math.random()
+    d.lng = newPosition.lng // * Math.random()
+    d.alt = newPosition.alt * 100 / 6371;
     // d.lng += 0.05 //* Math.random()
   });
   Globe.customLayerData(Globe.customLayerData());
   // Frame cycle
   tbControls.update();
   renderer.render(scene, camera);
-  requestAnimationFrame(animate);
-})();
 
-console.log(passed, failed);
+  setTimeout(() => {
+    requestAnimationFrame(animate);
+  }, 1000 / fps);
+}
+
+animate();

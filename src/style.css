@@ -43,3 +43,24 @@
   color: #fff;
   text-align: left;
 }
+
+.left-controls {
+  position: fixed;
+  top: 50px;
+  left: 0;
+}
+
+.control {
+  border: 1px solid #fff;
+  padding: 5px;
+}
+
+.control label {
+  color: #fff;
+  display: inline-block;
+  width: 100px;
+}
+
+select {
+  /* color: #fff;  */
+}
