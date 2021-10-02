@@ -5,7 +5,7 @@ import ThreeGlobe from 'three-globe';
 import { twoline2satrec, sgp4, propagate, degreesToRadians, gstime, eciToEcf, geodeticToEcf, eciToGeodetic, ecfToLookAngles, dopplerFactor, degreesLong, degreesLat } from 'satellite.js'
 import { data } from './data'
 import { uniq, random } from 'lodash'
-
+import { addMinutes } from 'date-fns';
 
 // Sample TLE
 var tleLine1 = '1 25544U 98067A   19156.50900463  .00003075  00000-0  59442-4 0  9992',
@@ -13,13 +13,14 @@ var tleLine1 = '1 25544U 98067A   19156.50900463  .00003075  00000-0  59442-4 0 
 
 // You will need GMST for some of the coordinate transforms.
 // http://en.wikipedia.org/wiki/Sidereal_time#Definition
-var gmst = gstime(new Date());
+
 
 var failed = [], passed = [];
 
-function getPosition(tle1, tle2) {
+function getPosition(tle1, tle2, date) {
+  const gmst = gstime(date);
   const satrec = twoline2satrec(tle1, tle2);
-  const { position } = propagate(satrec, new Date());
+  const { position } = propagate(satrec, date);
   const gd = eciToGeodetic(position, gmst);
 
   return {
@@ -70,7 +71,7 @@ var sizeMap = {
 
 const gData = data.filter(x => x.RCS_SIZE !== null).map(x => {
 
-  var coord = getPosition(x.TLE_LINE1, x.TLE_LINE2);
+  var coord = getPosition(x.TLE_LINE1, x.TLE_LINE2, new Date());
   return {
     origin: x,
     lat: coord.lat,
@@ -95,7 +96,6 @@ const Globe = new ThreeGlobe()
   // .pointOfView({ altitude: 3.5 })
   .customLayerData(gData)
   .customThreeObject((d, globRadius) => {
-    console.log(globRadius);
     return new THREE.Mesh(
       new THREE.SphereBufferGeometry(d.radius),
       new THREE.MeshLambertMaterial({ color: d.color })
@@ -132,6 +132,26 @@ const tbControls = new TrackballControls(camera, renderer.domElement);
 tbControls.minDistance = 101;
 tbControls.rotateSpeed = 5;
 tbControls.zoomSpeed = 0.8;
+
+const date = new Date();
+
+
+function moveSpheres() {
+
+  gData.forEach(x => {
+    var coord = getPosition(x.origin.TLE_LINE1, x.origin.TLE_LINE2, date);
+
+    x.lat += 0.01 //coord.lat;
+    x.lng += 0.01 //coord.lng;
+    x.alt = coord.alt * 100 / 6371;
+  })
+
+  Globe.customLayerData(Globe.customLayerData());
+}
+
+setInterval(() => {
+  moveSpheres();
+}, 10);
 
 // Kick-off renderer
 (function animate() { // IIFE
