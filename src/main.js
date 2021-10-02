@@ -5,10 +5,10 @@ import * as THREE from 'three';
 import { addSeconds } from 'date-fns';
 import { Globe, createCoordPoint, getPosition, updatePoints, getNumberFamily } from './helper'
 import { uniq, groupBy, chain } from 'lodash';
+// import { Interaction } from 'three.interaction';
+import { Interaction } from './three.interaction/index'
 
-const fps = 20;
-
-console.log(Globe);
+const fps = 30;
 
 // You will need GMST for some of the coordinate transforms.
 // http://en.wikipedia.org/wiki/Sidereal_time#Definition
@@ -92,6 +92,7 @@ document.getElementById('globeViz').appendChild(renderer.domElement);
 
 // Setup scene
 const scene = new THREE.Scene();
+
 scene.add(Globe);
 scene.add(new THREE.AmbientLight(0xbbbbbb));
 scene.add(new THREE.DirectionalLight(0xffffff, 0.6));
@@ -101,6 +102,9 @@ const camera = new THREE.PerspectiveCamera();
 camera.aspect = window.innerWidth / window.innerHeight;
 camera.updateProjectionMatrix();
 camera.position.z = 500;
+
+// new a interaction, then you can add interaction-event with your free style
+const interaction = new Interaction(renderer, scene, camera);
 
 // Add camera controls
 const tbControls = new TrackballControls(camera, renderer.domElement);
@@ -132,7 +136,7 @@ let i = 1;
 function animate() { // IIFE
 
   i++;
-  if (i % 10 === 0 || i % 5 === 0 || i % 3 === 0 || i % 7 === 0) {
+  if (i % 10 === 0) {
     setTimeout(() => {
       requestAnimationFrame(animate);
     }, 1000 / fps);

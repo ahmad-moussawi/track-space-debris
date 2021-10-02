@@ -16,9 +16,9 @@
   <!-- <script src="//unpkg.com/three/examples/js/controls/TrackballControls.js"></script> -->
   <!-- <script src="//unpkg.com/three-globe"></script> -->
   <!--<script src="../../dist/three-globe.js"></script>-->
-  <script type="module" crossorigin src="/assets/index.5533b4af.js"></script>
-    <link rel="modulepreload" href="/assets/vendor.91ac3ab1.js">
-    <link rel="stylesheet" href="/assets/index.48381db2.css">
+  <script type="module" crossorigin src="/assets/index.41b76d6b.js"></script>
+    <link rel="modulepreload" href="/assets/vendor.7bb03852.js">
+    <link rel="stylesheet" href="/assets/index.7ad02559.css">
   </head>
 
 <body>
@@ -34,18 +34,24 @@
       </select>
     </div>
     <div class="control">
-      <label>Country</label>
+      <label>Country Origin</label>
       <select id="filter_country"></select>
     </div>
     <div class="control">
       <label>Period</label>
       <select id="filter_period">
         <option>ALL</option>
-        <option value="10">&lt; 10</option>
         <option value="100">&lt; 100</option>
         <option value="1000">&lt; 1000</option>
         <option value="10000">&lt; 10000</option>
       </select>
+    </div>
+    <div class="control">
+      <label>
+        Conjunction assessment
+        <input type="checkbox" id="option_conjunction">
+      </label>
+
     </div>
   </div>
   <!-- <div class="controls">
@@ -58,6 +64,7 @@
     </div>
   </div> -->
   <div class="console"></div>
+  <div class="console console2"></div>
   <div id="globeViz"></div>
   
 </body>

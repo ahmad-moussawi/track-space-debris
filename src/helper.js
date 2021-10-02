@@ -49,10 +49,30 @@ export
 export function updatePoints(globe, data) {
     return globe.customLayerData(data)
         .customThreeObject((d, globRadius) => {
-            return new THREE.Mesh(
+            var mesh = new THREE.Mesh(
                 new THREE.SphereBufferGeometry(d.radius),
                 new THREE.MeshLambertMaterial({ color: d.color })
-            )
+            );
+
+            mesh.on('mouseover', function (ev) {
+                document.querySelector('.console2').innerHTML = [
+                    `<b class="green">${d.origin.OBJECT_NAME}</b>`,
+                    `${d.origin.COMMENT}`,
+                    `LAT: ${d.lat.toFixed(3)}`,
+                    `LNG: ${d.lng.toFixed(3)}`,
+                    `ALT: ${d.alt}KM`,
+                    `CREATION DATE: ${d.origin.CREATION_DATE}`,
+                    `SIZE: <span style="color:${sizeColor[d.origin.RCS_SIZE]}">${d.origin.RCS_SIZE}</span>`,
+                ].join('\n');
+            })
+
+            mesh.on('click', function (ev) {
+                var optionConjuctionAssesment = document.querySelector('#option_conjunction').checked;
+
+                console.log(optionConjuctionAssesment)
+            })
+
+            return mesh;
         })
         .customThreeObjectUpdate((obj, d) => {
             Object.assign(obj.position, globe.getCoords(d.lat, d.lng, d.alt / 100));

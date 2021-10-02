@@ -32,7 +32,7 @@
 .console {
   border: 2px dotted green;
   padding: 10px;
-  height: 300px;
+  height: 280px;
   position: fixed;
   top: 50px;
   right: 0;
@@ -42,6 +42,10 @@
   white-space: pre;
   color: #fff;
   text-align: left;
+}
+
+.console2 {
+  top: 360px
 }
 
 .left-controls {
@@ -63,4 +67,8 @@
 
 select {
   /* color: #fff;  */
+}
+
+.green {
+  color: green;
 }
