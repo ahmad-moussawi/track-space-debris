@@ -10,8 +10,8 @@ Check a demo under http://cedarx-nasaspaceapps.vivida.me/
 The increasing amount of debris orbiting Earth could potentially limit our access to space, impacting not only exploration efforts, but routine aspects of our life on Earth. Our project is an open-source application that displays and locates known debris object orbiting the earth visualized on a 3D globe. Filters and conjunction assessment feature are added to help users facilitate tracking and anticipate risks of collision. All space agencies around the world intend to help predicting and solving human-kind problems, however without putting efforts on locating and cleaning up the debris mess out there, all other space missions become hopeless.
 
 # Technology used
- This project if fully open source, with no licence attached, feel free to do whatever you want, no need to get back to the original author.
-it depends heavily on open source libraries, please check each library for it's licence.
+ This project is open source under the MIT licence, data are extracted from SpaceTrack.com.
+ The project is web based, built on top of HTML, CSS, and JavaScript, we intentionly tried to keep it simple and tried to not depends on high level library for simplicity and ease of extension later on.
 
 Here is a list of the libraries used:
  - Three.js
