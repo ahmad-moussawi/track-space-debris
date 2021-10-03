@@ -21,6 +21,15 @@
 <body>
   <div class="left-controls">
     <div class="control">
+      <label>Size</label>
+      <select id="filter_size">
+        <option>ALL</option>
+        <option value="SMALL">SMALL (&lt; 0.1m<sup>²</sup>)</option>
+        <option value="MEDIUM">MEDIUM (0.1m<sup>²</sup> – 1m<sup>²</sup>)</option>
+        <option value="LARGE">LARGE (&gt; 1m<sup>²</sup>)</option>
+      </select>
+    </div>
+    <div class="control">
       <label>Object Type</label>
       <select id="filter_object_type">
         <option>ALL</option>
@@ -50,6 +59,11 @@
       </label>
 
     </div>
+
+    <div class="alert hidden">
+      The probability of collision is ~70%
+    </div>
+
   </div>
   <!-- <div class="controls">
     <div>
@@ -60,8 +74,9 @@
       <button class="btn">COLLISION</button>
     </div>
   </div> -->
-  <div class="console"></div>
+  <div class="console console1"></div>
   <div class="console console2"></div>
+
   <div id="globeViz"></div>
   <script type="module" src="/src/main.js"></script>
 </body>

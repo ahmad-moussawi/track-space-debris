@@ -16,13 +16,22 @@
   <!-- <script src="//unpkg.com/three/examples/js/controls/TrackballControls.js"></script> -->
   <!-- <script src="//unpkg.com/three-globe"></script> -->
   <!--<script src="../../dist/three-globe.js"></script>-->
-  <script type="module" crossorigin src="/assets/index.41b76d6b.js"></script>
+  <script type="module" crossorigin src="/assets/index.55847ea3.js"></script>
     <link rel="modulepreload" href="/assets/vendor.7bb03852.js">
-    <link rel="stylesheet" href="/assets/index.7ad02559.css">
+    <link rel="stylesheet" href="/assets/index.32c06016.css">
   </head>
 
 <body>
   <div class="left-controls">
+    <div class="control">
+      <label>Size</label>
+      <select id="filter_size">
+        <option>ALL</option>
+        <option value="SMALL">SMALL (&lt; 0.1m<sup>²</sup>)</option>
+        <option value="MEDIUM">MEDIUM (0.1m<sup>²</sup> – 1m<sup>²</sup>)</option>
+        <option value="LARGE">LARGE (&gt; 1m<sup>²</sup>)</option>
+      </select>
+    </div>
     <div class="control">
       <label>Object Type</label>
       <select id="filter_object_type">
@@ -53,6 +62,11 @@
       </label>
 
     </div>
+
+    <div class="alert hidden">
+      The probability of collision is ~70%
+    </div>
+
   </div>
   <!-- <div class="controls">
     <div>
@@ -63,8 +77,9 @@
       <button class="btn">COLLISION</button>
     </div>
   </div> -->
-  <div class="console"></div>
+  <div class="console console1"></div>
   <div class="console console2"></div>
+
   <div id="globeViz"></div>
   
 </body>

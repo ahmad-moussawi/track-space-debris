@@ -1,6 +1,6 @@
 import './style.css'
 import { TrackballControls } from './TrackballControls';
-import { data as DATA } from './data'
+import { DATA_10000 as DATA } from './data_10000'
 import * as THREE from 'three';
 import { addSeconds } from 'date-fns';
 import { Globe, createCoordPoint, getPosition, updatePoints, getNumberFamily } from './helper'
@@ -13,44 +13,42 @@ const fps = 30;
 // You will need GMST for some of the coordinate transforms.
 // http://en.wikipedia.org/wiki/Sidereal_time#Definition
 
-// OBJECT_TYPE: PAYLOAD, DEBRIS, ROCKET BODY, TBA
-// COUNTRY: US, PRC, JPN, NETH, POL, CIS, TBD, CA, SVN, UK, ARGN, FR, IT, FIN, GER, NZ, IND, UAE, LUXE, SPN, SWTZ, INDO, LTU, EUTE, ISRA, AC, BELA, TURK, DEN, SING, SES, ROC, NKOR, SKOR, KAZ, IM, ITSO, EGYP, SEAL, CHBZ, SAFR, ESA, STCT, AB, BRAZ, AUS, ALG, NOR, EUME, ECU, ISS
-// LAUNCH_DATE
-// console.log(uniq(data.map(x => x.)).join(', '));
-
-const ALL_COUNTRIES = groupBy(DATA.map(x => x.COUNTRY_CODE), x => x);
+const ALL_COUNTRIES = groupBy(DATA.map(x => x.country), x => x);
 
 document.querySelector('#filter_country').innerHTML =
   `<option>ALL</option>` + Object.keys(ALL_COUNTRIES)
     .map(x => `<option value=${x}>${x} (${ALL_COUNTRIES[x].length})</option>`)
 
-
-
-
+const alert = document.querySelector('.alert');
+alert.addEventListener('click', ev => {
+  alert.classList.add('hidden');
+});
 
 let filter = {
   objectType: 'ALL',
   countryCode: 'ALL',
   period: 'ALL',
+  size: 'ALL',
 };
 
 
 export function filterData(data, filter) {
   let all = chain(data);
 
-  console.log(filter);
-
-
   if (filter.objectType !== 'ALL') {
-    all = all.filter(x => x.OBJECT_TYPE === filter.objectType);
+    all = all.filter(x => x.type === filter.objectType);
   }
 
   if (filter.countryCode !== 'ALL') {
-    all = all.filter(x => x.COUNTRY_CODE === filter.countryCode);
+    all = all.filter(x => x.country === filter.countryCode);
   }
 
   if (filter.period !== 'ALL') {
-    all = all.filter(x => x.PERIOD <= +filter.period);
+    all = all.filter(x => x.period <= +filter.period);
+  }
+
+  if (filter.size !== 'ALL') {
+    all = all.filter(x => x.size === filter.size);
   }
 
   return all.value();
@@ -60,7 +58,6 @@ export function filterData(data, filter) {
 document.querySelector('#filter_object_type').addEventListener('change', ev => {
   filter.objectType = ev.target.value;
   gData = filterData(DATA, filter).map(x => createCoordPoint(x));
-  console.log(gData);
   updatePoints(Globe, gData);
 });
 
@@ -76,14 +73,16 @@ document.querySelector('#filter_period').addEventListener('change', ev => {
   updatePoints(Globe, gData);
 });
 
+document.querySelector('#filter_size').addEventListener('change', ev => {
+  filter.size = ev.target.value;
+  gData = filterData(DATA, filter).map(x => createCoordPoint(x));;
+  updatePoints(Globe, gData);
+});
+
 
 
 let gData = DATA.map(x => createCoordPoint(x));
 updatePoints(Globe, gData);
-
-document.querySelector('.console').innerHTML = gData.slice(0, 100).map(x =>
-  `${x.origin.OBJECT_NAME}: ${x.lat.toFixed(2)}, ${x.lng.toFixed(2)}`
-).join('\n')
 
 // Setup renderer
 const renderer = new THREE.WebGLRenderer();
@@ -112,22 +111,6 @@ tbControls.minDistance = 101;
 tbControls.rotateSpeed = 5;
 tbControls.zoomSpeed = 0.8;
 
-const date = new Date();
-
-
-function moveSpheres() {
-
-  gData.forEach(x => {
-    var coord = getPosition(x.origin.TLE_LINE1, x.origin.TLE_LINE2, date);
-
-    x.lat += random(.1, .2) //coord.lat;
-    // x.lng += random(.1, .2) //coord.lng;
-    x.alt = coord.alt * 100 / 6371;
-  })
-
-  Globe.customLayerData(Globe.customLayerData());
-}
-
 const start = new Date();
 let i = 1;
 
@@ -151,7 +134,7 @@ function animate() { // IIFE
 
   gData.forEach(d => {
     const newPosition = getPosition(
-      d.origin.TLE_LINE1, d.origin.TLE_LINE2,
+      d.origin.tle1, d.origin.tle2,
       newTime
     );
 

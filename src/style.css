@@ -72,3 +72,27 @@ select {
 .green {
   color: green;
 }
+
+.alert {
+  /* position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); */
+  margin-top: 10px;
+  border: 4px dotted red;
+  padding: 15px;
+  display: flex;
+  width: 300px;
+  height: 200px;
+  justify-content: center;
+  align-items: center;
+  font-family: monospace;
+  color: red;
+  background-color: #ffffffc4;
+  font-size: 20px;
+  text-align: center;
+}
+
+.hidden {
+  display: none;
+}

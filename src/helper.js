@@ -10,7 +10,7 @@ export var sizeMap = {
 };
 
 export var sizeColor = {
-    SMALL: 'green',
+    SMALL: 'yellow',
     MEDIUM: 'blue',
     LARGE: 'red',
 };
@@ -20,19 +20,18 @@ export const Globe = new ThreeGlobe()
     .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
 
 export function createCoordPoint(x) {
-    var coord = getPosition(x.TLE_LINE1, x.TLE_LINE2, new Date());
+    var coord = getPosition(x.tle1, x.tle2, new Date());
     return {
         origin: x,
         lat: coord.lat,
         lng: coord.lng,
         alt: coord.alt * 100 / 6371,
-        radius: sizeMap[x.RCS_SIZE] * random(0.8, 1.2),
-        color: sizeColor[x.RCS_SIZE],
+        radius: sizeMap[x.size] * random(0.8, 1.2),
+        color: sizeColor[x.size],
     }
 }
 
-export
-    function getPosition(tle1, tle2, date) {
+export function getPosition(tle1, tle2, date) {
     const gmst = gstime(date);
     const satrec = twoline2satrec(tle1, tle2);
     const { position } = propagate(satrec, date);
@@ -47,6 +46,13 @@ export
 }
 
 export function updatePoints(globe, data) {
+
+    document.querySelector('.console1').innerHTML = `<b style="font-size:40px;">${data.length}</b> object rendered now\n\n`;
+
+    document.querySelector('.console1').innerHTML += data.slice(0, 100).map(x =>
+        `${x.origin.name}: ${x.lat.toFixed(2)}, ${x.lng.toFixed(2)}`
+    ).join('\n')
+
     return globe.customLayerData(data)
         .customThreeObject((d, globRadius) => {
             var mesh = new THREE.Mesh(
@@ -56,20 +62,22 @@ export function updatePoints(globe, data) {
 
             mesh.on('mouseover', function (ev) {
                 document.querySelector('.console2').innerHTML = [
-                    `<b class="green">${d.origin.OBJECT_NAME}</b>`,
-                    `${d.origin.COMMENT}`,
+                    `<b style="color: greenyellow;font-size: 30px">${d.origin.name}</b>`,
+                    `${d.origin.comment}`,
                     `LAT: ${d.lat.toFixed(3)}`,
                     `LNG: ${d.lng.toFixed(3)}`,
-                    `ALT: ${d.alt}KM`,
-                    `CREATION DATE: ${d.origin.CREATION_DATE}`,
-                    `SIZE: <span style="color:${sizeColor[d.origin.RCS_SIZE]}">${d.origin.RCS_SIZE}</span>`,
+                    `ALT: ${d.alt.toFixed(2)}KM`,
+                    `CREATION DATE: ${d.origin.created_at}`,
+                    `SIZE: <span style="color:${sizeColor[d.origin.size]}">${d.origin.size}</span>`,
                 ].join('\n');
             })
 
             mesh.on('click', function (ev) {
                 var optionConjuctionAssesment = document.querySelector('#option_conjunction').checked;
 
-                console.log(optionConjuctionAssesment)
+                if (optionConjuctionAssesment) {
+                    document.querySelector('.alert').classList.remove('hidden');
+                }
             })
 
             return mesh;
