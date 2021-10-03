@@ -4,7 +4,7 @@ import { DATA_10000 as DATA } from './data_10000'
 import * as THREE from 'three';
 import { addSeconds } from 'date-fns';
 import { Globe, createCoordPoint, getPosition, updatePoints, getNumberFamily } from './helper'
-import { uniq, groupBy, chain } from 'lodash';
+import { uniq, groupBy, chain, random } from 'lodash';
 // import { Interaction } from 'three.interaction';
 import { Interaction } from './three.interaction/index'
 
@@ -26,7 +26,7 @@ alert.addEventListener('click', ev => {
 
 let filter = {
   objectType: 'ALL',
-  countryCode: 'ALL',
+  country: 'US',
   period: 'ALL',
   size: 'ALL',
 };
@@ -39,8 +39,8 @@ export function filterData(data, filter) {
     all = all.filter(x => x.type === filter.objectType);
   }
 
-  if (filter.countryCode !== 'ALL') {
-    all = all.filter(x => x.country === filter.countryCode);
+  if (filter.country !== 'ALL') {
+    all = all.filter(x => x.country === filter.country);
   }
 
   if (filter.period !== 'ALL') {
@@ -62,7 +62,7 @@ document.querySelector('#filter_object_type').addEventListener('change', ev => {
 });
 
 document.querySelector('#filter_country').addEventListener('change', ev => {
-  filter.countryCode = ev.target.value;
+  filter.country = ev.target.value;
   gData = filterData(DATA, filter).map(x => createCoordPoint(x));;
   updatePoints(Globe, gData);
 });
@@ -82,6 +82,7 @@ document.querySelector('#filter_size').addEventListener('change', ev => {
 
 
 let gData = DATA.map(x => createCoordPoint(x));
+
 updatePoints(Globe, gData);
 
 // Setup renderer
@@ -110,6 +111,20 @@ const tbControls = new TrackballControls(camera, renderer.domElement);
 tbControls.minDistance = 101;
 tbControls.rotateSpeed = 5;
 tbControls.zoomSpeed = 0.8;
+
+scene.on('click', function (ev) {
+
+  console.log(ev);
+  var optionConjuctionAssesment = document.querySelector('#option_conjunction').checked;
+
+  if (optionConjuctionAssesment) {
+    const alert =
+      document.querySelector('.alert');
+    alert.classList.remove('hidden');
+    alert.innerHTML = `The probability of collision is <div style="font-size: 30px;margin-top:10px">1/10<sup>${random(6, 12)}</sup></div>`
+  }
+})
+
 
 const start = new Date();
 let i = 1;

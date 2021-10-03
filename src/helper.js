@@ -72,13 +72,7 @@ export function updatePoints(globe, data) {
                 ].join('\n');
             })
 
-            mesh.on('click', function (ev) {
-                var optionConjuctionAssesment = document.querySelector('#option_conjunction').checked;
 
-                if (optionConjuctionAssesment) {
-                    document.querySelector('.alert').classList.remove('hidden');
-                }
-            })
 
             return mesh;
         })
