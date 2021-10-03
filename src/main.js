@@ -26,7 +26,7 @@ alert.addEventListener('click', ev => {
 
 let filter = {
   objectType: 'ALL',
-  country: 'US',
+  country: 'ALL',
   period: 'ALL',
   size: 'ALL',
 };
