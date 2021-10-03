@@ -67,7 +67,9 @@ export function updatePoints(globe, data) {
                     `LAT: ${d.lat.toFixed(3)}`,
                     `LNG: ${d.lng.toFixed(3)}`,
                     `ALT: ${d.alt.toFixed(2)}KM`,
-                    `CREATION DATE: ${d.origin.created_at}`,
+                    `CENTER: ${d.origin.center}`,
+                    `LAUNCH DATE: ${d.origin.launch_date}`,
+                    `PERIOD: ${d.origin.period} minutes`,
                     `SIZE: <span style="color:${sizeColor[d.origin.size]}">${d.origin.size}</span>`,
                 ].join('\n');
             })
