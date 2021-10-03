@@ -2,7 +2,10 @@
 
 <i>This project is a part of the competition done by https://www.spaceappschallenge.org/</i>
 
+Check a demo under http://cedarx-nasaspaceapps.vivida.me/
+
 # Introduction
+The increasing amount of debris orbiting Earth could potentially limit our access to space, impacting not only exploration efforts, but routine aspects of our life on Earth. Our project is an open-source application that displays and locates known debris object orbiting the earth visualized on a 3D globe. Filters and conjunction assessment feature are added to help users facilitate tracking and anticipate risks of collision. All space agencies around the world intend to help predicting and solving human-kind problems, however without putting efforts on locating and cleaning up the debris mess out there, all other space missions become hopeless.
 
 # Technology used
  This project if fully open source, with no licence attached, feel free to do whatever you want, no need to get back to the original author.
