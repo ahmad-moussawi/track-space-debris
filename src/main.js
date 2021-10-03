@@ -44,7 +44,11 @@ export function filterData(data, filter) {
   }
 
   if (filter.period !== 'ALL') {
-    all = all.filter(x => x.period <= +filter.period);
+    let [low, high] = filter.period.split('-');
+    low = +low;
+    high = +high;
+    console.log(low, high)
+    all = all.filter(x => x.period >= low && x.period < high);
   }
 
   if (filter.size !== 'ALL') {

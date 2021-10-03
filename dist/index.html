@@ -16,7 +16,7 @@
   <!-- <script src="//unpkg.com/three/examples/js/controls/TrackballControls.js"></script> -->
   <!-- <script src="//unpkg.com/three-globe"></script> -->
   <!--<script src="../../dist/three-globe.js"></script>-->
-  <script type="module" crossorigin src="/assets/index.4d92394c.js"></script>
+  <script type="module" crossorigin src="/assets/index.c0b912a7.js"></script>
     <link rel="modulepreload" href="/assets/vendor.7bb03852.js">
     <link rel="stylesheet" href="/assets/index.bb24e853.css">
   </head>
@@ -47,12 +47,14 @@
       <select id="filter_country"></select>
     </div>
     <div class="control">
-      <label>Period (in Minutes)</label>
+      <label>Period</label>
       <select id="filter_period">
         <option>ALL</option>
-        <option value="100">&lt; 100</option>
-        <option value="1000">&lt; 1000</option>
-        <option value="10000">&lt; 10000</option>
+        <option value="0-100">[0-300] min</option>
+        <option value="100-300">[100-300] min</option>
+        <option value="200-300">[200-300] min</option>
+        <option value="300-900">[300-900] min</option>
+        <option value="900-20000">&gt; 900 min</option>
       </select>
     </div>
     <div class="control">

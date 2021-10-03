@@ -44,12 +44,14 @@
       <select id="filter_country"></select>
     </div>
     <div class="control">
-      <label>Period (in Minutes)</label>
+      <label>Period</label>
       <select id="filter_period">
         <option>ALL</option>
-        <option value="100">&lt; 100</option>
-        <option value="1000">&lt; 1000</option>
-        <option value="10000">&lt; 10000</option>
+        <option value="0-100">[0-300] min</option>
+        <option value="100-300">[100-300] min</option>
+        <option value="200-300">[200-300] min</option>
+        <option value="300-900">[300-900] min</option>
+        <option value="900-20000">&gt; 900 min</option>
       </select>
     </div>
     <div class="control">
