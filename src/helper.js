@@ -35,7 +35,11 @@ export function getPosition(tle1, tle2, date) {
     const gmst = gstime(date);
     const satrec = twoline2satrec(tle1, tle2);
     const { position } = propagate(satrec, date);
+
+    if (!position) return false;
+
     const gd = eciToGeodetic(position, gmst);
+
 
     return {
         lat: degreesLat(gd.latitude),
@@ -60,7 +64,7 @@ export function updatePoints(globe, data) {
                 new THREE.MeshLambertMaterial({ color: d.color })
             );
 
-            mesh.on('mouseover', function (ev) {
+            mesh.on('mouseover', function(ev) {
                 document.querySelector('.console2').innerHTML = [
                     `<b style="color: greenyellow;font-size: 30px">${d.origin.name}</b>`,
                     `${d.origin.comment}`,
